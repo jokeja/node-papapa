@@ -1,11 +1,12 @@
 var request = require('request')
 var fs = require('fs')
 const cheerio = require("cheerio")
-const maxCid = 2245//2245
-const startCid = 2203
+const maxCid = 2189//2245
+const startCid = 2189 //2189
 let url = 'https://www.cool18.com/bbs4/index.php?app=book&act=bookview&cid='
-if (!fs.existsSync('./十景缎')) {
-  fs.mkdirSync('./十景缎')
+const path = './docs/sjd'
+if (!fs.existsSync(path)) {
+  fs.mkdirSync(path)
 }
 getData(startCid)
 
@@ -22,13 +23,13 @@ function getData(cid) {
     if (!err) {
       const $ = cheerio.load(body);
       let title = $('meta[name="Description"]').attr('content')
-      let content = $('pre').html().replace(/<p>/g, '\n')
+      let content = $('pre').html()//.replace(/<p>/g, '\n')
       content = content.replace(/<font color="#E6E6DD">cool18.com<\/font>/g, '')
-      content = content.replace(/<\/p>/g, '\n')
-      content = content.replace(/<br>/g, '\n')
+      // content = content.replace(/<\/p>/g, '\n')
+      // content = content.replace(/<br>/g, '\n')
 
       // console.log(content)
-      fs.writeFile('./十景缎/' + title + '.md', title + '\n' + content, 'utf-8', (err, data) => {
+      fs.writeFile(path + '/' + cid + '.html', title + '<br>' + content, 'utf-8', (err, data) => {
         console.log('----writeFile--err------', err)
         // console.log('------data------', data)
         getData(++cid)
