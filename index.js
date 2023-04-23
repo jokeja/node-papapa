@@ -35,9 +35,10 @@ function getData(cid) {
       if (cid < endCid) {
         nextPage = '<a href="./' + (cid + 1) + '.html">下一页</a>'
       }
-      content += `<div>${lastPage}${nextPage}</div>`
+      content += `<div style='text-align: center;'>${lastPage}${nextPage}</div>`
+      let body = `<body style='font-size: 24px;'>${content}</body>`
       // console.log(content)
-      fs.writeFile(path + '/' + cid + '.html', content, 'utf-8', (err, data) => {
+      fs.writeFile(path + '/' + cid + '.html', body, 'utf-8', (err, data) => {
         console.log('----writeFile--err------', err)
         // console.log('------data------', data)
         getData(++cid)
