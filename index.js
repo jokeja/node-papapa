@@ -1,3 +1,6 @@
 const cool18 = require('./cool18')
+const stock = require('./stock')
 // cool18.beginPapapa()
-cool18.rewrite()
+// cool18.rewrite()
+const r = stock.makeTProfit(3000, 0.737, 0.723, 2 / 10000)
+console.log('------makeTProfit------', r)
