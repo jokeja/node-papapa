@@ -37,7 +37,9 @@ function coverCost(oriStockNo, oriCost, curStockNo, curPermoney) {
 // 做T利润 所得利润为=（卖出价-买入价）*股数-买卖佣金和印花税及沪市过户费
 // 做T股数，卖出价，买入价，佣金费率，过户费率
 function makeTProfit(tStockNum, sellPrice, buyPrice, commissionRate, transferRate = 0) {
-  return (sellPrice-buyPrice) * tStockNum - (commisionAmount(sellPrice, tStockNum, commissionRate) + commisionAmount(buyPrice, tStockNum, commissionRate))
+  let rst = (sellPrice-buyPrice) * tStockNum - (commisionAmount(sellPrice, tStockNum, commissionRate) + commisionAmount(buyPrice, tStockNum, commissionRate))
+
+  console.log(`makeTProfit(tStockNum:${tStockNum},sellPrice:${sellPrice},buyPrice:${buyPrice})==${rst}`)
 }
 
 module.exports = {
