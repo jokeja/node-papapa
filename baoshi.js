@@ -27,11 +27,43 @@ function getData(cid) {
     console.log('-----body----', body)
     let ossUrl = 'https://ebooktxt.oss-cn-shenzhen.aliyuncs.com'
     let decParams = CryptoJS.AES.decrypt(body, CryptoJS.enc.Utf8.parse(token.substr(0, 16)), { iv: CryptoJS.enc.Utf8.parse(token.substr(16)), mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }).toString(CryptoJS.enc.Utf8)
-    ossUrl += decParams
-    ossUrl += "&t=" + new Date().valueOf()
+    if (decParams) {
+      ossUrl += decParams
+      ossUrl += "&t=" + new Date().valueOf()
+      loadInPuppeteer(ossUrl, cid)
+    }else{
+      let html = `<html>
+      <body>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" />
+      <script>
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('GET', ${ossUrl}, true);
+        httpRequest.onload = function () {
+          if (this.status === 200) {
+            var result = this.responseText;
+            var url = "https://ebooktxt.oss-cn-shenzhen.aliyuncs.com";
+            url += CryptoJS.AES.decrypt(result, CryptoJS.enc.Utf8.parse(token.substr(0, 16)), { iv: CryptoJS.enc.Utf8.parse(token.substr(16)), mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }).toString(CryptoJS.enc.Utf8);
+            url += "&t=" + new Date().valueOf();
+            var httpRequest2 = new XMLHttpRequest();
+            httpRequest2.open('GET', url, true);
+            httpRequest2.overrideMimeType("text/plain;charset=gb2312");
+            httpRequest2.onerror = function () {
+                setTimeout(function () { window.location.reload() }, 100);
+            };
+            httpRequest2.onload = async function () {
+                if (this.status === 200) {
+                    var html = this.responseText;
+                    document.body.append(html)
+                  }
+          }
+        }
+      </script>
+      </body>
+      </html>`
+      console.log('-------html-------', html)
+    }
     // getOssData(ossUrl)
     console.log('-------ossUrl-------', ossUrl)
-    loadInPuppeteer(ossUrl, cid)
   })
 }
 
