@@ -8,7 +8,7 @@ const puppeteer = require('puppeteer');
 
 // https://www.xinremenxs.com/read/info/7037531-34293761-343342274.js?token=351567d31ceb2d0fc94627c581001716
 let userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
-let cid = 343342843
+let cid = 343342842
 // 343344282
 let filePath = './docs/sydg'
 function getData(cid) {
@@ -39,7 +39,7 @@ function getData(cid) {
 
 function loadInPuppeteer(ossUrl, cid) {
   // 343342256  343344282
-  if (cid > 343344258) {
+  if (cid > 343344282) {
     return
   }
   (async () => {
@@ -49,6 +49,15 @@ function loadInPuppeteer(ossUrl, cid) {
     let content = await page.content()
     await browser.close();
     console.log('----content----', content)
+    let lastPage = ''
+    if (cid > 343342256) {
+      lastPage = `<a href="./${(cid - 1)}.html">上一页</a>`
+    }
+    let nextPage = ''
+    if (cid < 343344282) {
+      nextPage = `<a href="./${cid + 1}.html">下一页</a>`
+    }
+    content = content.replace(`</pre>`, `</pre><div style='text-align: center;'>${lastPage}${nextPage}</div>`)
     fs.writeFile(filePath + '/' + cid + '.html', content, 'utf-8', (err, data) => {
       console.log('----writeFile--err------', err)
       // console.log('------data------', data)
