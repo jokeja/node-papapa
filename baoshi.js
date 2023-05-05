@@ -31,36 +31,6 @@ function getData(cid) {
       ossUrl += decParams
       ossUrl += "&t=" + new Date().valueOf()
       loadInPuppeteer(ossUrl, cid)
-    }else{
-      let html = `<html>
-      <body>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" />
-      <script>
-        var httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', ${ossUrl}, true);
-        httpRequest.onload = function () {
-          if (this.status === 200) {
-            var result = this.responseText;
-            var url = "https://ebooktxt.oss-cn-shenzhen.aliyuncs.com";
-            url += CryptoJS.AES.decrypt(result, CryptoJS.enc.Utf8.parse(token.substr(0, 16)), { iv: CryptoJS.enc.Utf8.parse(token.substr(16)), mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }).toString(CryptoJS.enc.Utf8);
-            url += "&t=" + new Date().valueOf();
-            var httpRequest2 = new XMLHttpRequest();
-            httpRequest2.open('GET', url, true);
-            httpRequest2.overrideMimeType("text/plain;charset=gb2312");
-            httpRequest2.onerror = function () {
-                setTimeout(function () { window.location.reload() }, 100);
-            };
-            httpRequest2.onload = async function () {
-                if (this.status === 200) {
-                    var html = this.responseText;
-                    document.body.append(html)
-                  }
-          }
-        }
-      </script>
-      </body>
-      </html>`
-      console.log('-------html-------', html)
     }
     // getOssData(ossUrl)
     console.log('-------ossUrl-------', ossUrl)
@@ -90,6 +60,7 @@ function loadInPuppeteer(ossUrl, cid) {
       nextPage = `<a href="./${cid + 1}.html">下一页</a>`
     }
     content = content.replace(`</pre>`, `</pre><div style='text-align: center;'>${lastPage}${nextPage}</div>`)
+    content = content.replace(/pre/g, 'div')
     fs.writeFile(filePath + '/' + cid + '.html', content, 'utf-8', (err, data) => {
       console.log('----writeFile--err------', err)
       // console.log('------data------', data)
@@ -154,11 +125,28 @@ function rewrite() {
       nextPage = `<a href="./${nameNum + 1}.html">下一页</a>`
     }
     content = content.replace(`</pre>`, `</pre><div style='text-align: center;'>${lastPage}${nextPage}</div>`)
+    content = content.replace(/pre/g, 'div')
+    fs.writeFileSync(newPath, content)
+  })
+}
+
+function changeTag() {
+  let files = fs.readdirSync(filePath)
+  files.forEach((fItem, index) => {
+
+    console.log(fItem)
+    let name = fItem.replace('.html', '')
+    let nameNum = Number(name)
+    console.log('nameNum:', nameNum)
+    let newPath = filePath + '/' + fItem
+    var content = fs.readFileSync(newPath, 'utf-8')
+    content = content.replace(/pre/g, 'div')
     fs.writeFileSync(newPath, content)
   })
 }
 
 module.exports = {
   beginPapapa,
-  rewrite
+  rewrite,
+  changeTag
 }
