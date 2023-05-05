@@ -8,7 +8,7 @@ const puppeteer = require('puppeteer');
 
 // https://www.xinremenxs.com/read/info/7037531-34293761-343342274.js?token=351567d31ceb2d0fc94627c581001716
 let userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
-let cid = 343343671
+let cid = 343343971
 // 343344282
 let filePath = './docs/sydg'
 function getData(cid) {
@@ -61,6 +61,7 @@ function loadInPuppeteer(ossUrl, cid) {
     }
     content = content.replace(`</pre>`, `</pre><div style='text-align: center;'>${lastPage}${nextPage}</div>`)
     content = content.replace(/pre/g, 'div')
+    content = content.replace(/　　/g, '<br>')
     fs.writeFile(filePath + '/' + cid + '.html', content, 'utf-8', (err, data) => {
       console.log('----writeFile--err------', err)
       // console.log('------data------', data)
@@ -126,6 +127,7 @@ function rewrite() {
     }
     content = content.replace(`</pre>`, `</pre><div style='text-align: center;'>${lastPage}${nextPage}</div>`)
     content = content.replace(/pre/g, 'div')
+    content = content.replace(/　　/g, '<br>')
     fs.writeFileSync(newPath, content)
   })
 }
@@ -133,7 +135,6 @@ function rewrite() {
 function changeTag() {
   let files = fs.readdirSync(filePath)
   files.forEach((fItem, index) => {
-
     console.log(fItem)
     let name = fItem.replace('.html', '')
     let nameNum = Number(name)
@@ -141,7 +142,9 @@ function changeTag() {
     let newPath = filePath + '/' + fItem
     var content = fs.readFileSync(newPath, 'utf-8')
     content = content.replace(/pre/g, 'div')
+    content = content.replace(/　　/g, '<br>')
     fs.writeFileSync(newPath, content)
+
   })
 }
 
