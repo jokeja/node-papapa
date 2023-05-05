@@ -8,7 +8,7 @@ const puppeteer = require('puppeteer');
 
 // https://www.xinremenxs.com/read/info/7037531-34293761-343342274.js?token=351567d31ceb2d0fc94627c581001716
 let userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
-let cid = 343343971
+let cid = 343344056
 // 343344282
 let filePath = './docs/sydg'
 function getData(cid) {
