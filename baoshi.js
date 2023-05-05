@@ -165,7 +165,7 @@ function writeToFile(cid, content) {
     })
   })
 }
-function testPuppeteer(cid = 343344068) {
+function testPuppeteer(cid = 343344145) {
 
   const getArticle = async (browser, cid) => {
     if (cid > 343344282) {
@@ -177,12 +177,11 @@ function testPuppeteer(cid = 343344068) {
     // const wOssUrl = await ossUrl(cid)
     let content = await page.$eval('article', el => el.innerHTML)
     console.log('----content----', content)
-    while (content.indexOf('请稍后') >= 0) {
-      content = await page.$eval('article', el => el.innerHTML)
-      
-      console.log('----content----', content)
+    if (content.indexOf('请稍后') >= 0){
+      getArticle(browser, cid)
+    } else {
+      await writeToFile(cid, content)
     }
-    await writeToFile(cid, content)
     return cid
   }
 
