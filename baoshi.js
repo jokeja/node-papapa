@@ -5,39 +5,43 @@ const CryptoJS = require('crypto-js')
 const encoding = require('encoding')
 const XMLHttpRequest = require('node-http-xhr')
 const puppeteer = require('puppeteer');
+const { resolve } = require('path')
 
 // https://www.xinremenxs.com/read/info/7037531-34293761-343342274.js?token=351567d31ceb2d0fc94627c581001716
 let userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
-let cid = 343344056
+let cid = 343344057
 // 343344282
 let filePath = './docs/sydg'
-function getData(cid) {
-  var token = CryptoJS.HmacMD5(String(cid), userAgent).toString()
-  const url = 'https://www.xinremenxs.com/read/Content/' + cid + '.js?token=' + token
-  console.log('---------token----------', token)
-  console.log('---------url----------', url)
-  request.get(url, {
-    headers: {
-      'user-agent': userAgent
-    }
-  }, function (err, resp, body) {
-    // rNp21SH4zKBQdYm24ihNeyRLeiEBmGsqg9EhDOSLmv8/E2qg9qSq4+L3gFKnBhgufvkBNIry8/cvjVSxTUnDzAmL7KsnbiBm9pGEAEkShF6N6k9pxeA/L19MWH4iP9NoWaV2LO5B0vVVkJyhbEmOTusVv+NO5r7scmDTFRKLO/8Y3NLOa0wkUZsfqRkk594Z2qUFCMsshkdMtGHTMJUq0Q==
-
-    console.log('-----err----', err)
-    console.log('-----body----', body)
-    let ossUrl = 'https://ebooktxt.oss-cn-shenzhen.aliyuncs.com'
-    let decParams = CryptoJS.AES.decrypt(body, CryptoJS.enc.Utf8.parse(token.substr(0, 16)), { iv: CryptoJS.enc.Utf8.parse(token.substr(16)), mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }).toString(CryptoJS.enc.Utf8)
-    if (decParams) {
-      ossUrl += decParams
-      ossUrl += "&t=" + new Date().valueOf()
-      loadInPuppeteer(ossUrl, cid)
-    }
-    // getOssData(ossUrl)
-    console.log('-------ossUrl-------', ossUrl)
-  })
+async function getData(cid) {
+  const ossUrl = await ossUrl(cid)
+  loadInPuppeteer(ossUrl, cid)
 }
 
-
+function ossUrl(cid) {
+  var token = CryptoJS.HmacMD5(String(cid), userAgent).toString()
+  const url = 'https://www.xinremenxs.com/read/Content/' + cid + '.js?token=' + token
+  return new Promise((resolve, reject) => {
+    request.get(url, {
+      headers: {
+        'user-agent': userAgent
+      }
+    }, function (err, resp, body) {
+      console.log('-----err----', err)
+      console.log('-----body----', body)
+      let ossUrl = 'https://ebooktxt.oss-cn-shenzhen.aliyuncs.com'
+      let decParams = CryptoJS.AES.decrypt(body, CryptoJS.enc.Utf8.parse(token.substr(0, 16)), { iv: CryptoJS.enc.Utf8.parse(token.substr(16)), mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }).toString(CryptoJS.enc.Utf8)
+      if (decParams) {
+        ossUrl += decParams
+        ossUrl += "&t=" + new Date().valueOf()
+        resolve(ossUrl)
+      } else {
+        reject()
+      }
+      // getOssData(ossUrl)
+      console.log('-------ossUrl-------', ossUrl)
+    })
+  })
+}
 
 function loadInPuppeteer(ossUrl, cid) {
   // 343342256  343344282
@@ -51,22 +55,11 @@ function loadInPuppeteer(ossUrl, cid) {
     let content = await page.content()
     await browser.close();
     console.log('----content----', content)
-    let lastPage = ''
-    if (cid > 343342256) {
-      lastPage = `<a href="./${(cid - 1)}.html">上一页</a>`
-    }
-    let nextPage = ''
-    if (cid < 343344282) {
-      nextPage = `<a href="./${cid + 1}.html">下一页</a>`
-    }
-    content = content.replace(`</pre>`, `</pre><div style='text-align: center;'>${lastPage}${nextPage}</div>`)
     content = content.replace(/pre/g, 'div')
     content = content.replace(/　　/g, '<br>')
-    fs.writeFile(filePath + '/' + cid + '.html', content, 'utf-8', (err, data) => {
-      console.log('----writeFile--err------', err)
-      // console.log('------data------', data)
-      getData(++cid)
-    })
+    await writeToFile(cid, content)
+    getData(++cid)
+
   })();
 }
 
@@ -148,8 +141,82 @@ function changeTag() {
   })
 }
 
+
+function writeToFile(cid, content) {
+  return new Promise((resolve, reject) => {
+    let lastPage = ''
+    if (cid > 343342256) {
+      lastPage = `<a href="./${(cid - 1)}.html">上一页</a>`
+    }
+    let nextPage = ''
+    if (cid < 343344282) {
+      nextPage = `<a href="./${cid + 1}.html">下一页</a>`
+    }
+    if (content.indexOf('html') == -1) {
+      content = `<html><head><meta name="color-scheme" content="light dark"></head><body><div style="word-wrap: break-word; white-space: div-wrap;">${content}</div><div style='text-align: center;'>${lastPage}${nextPage}</div></body></html>`
+    }
+    fs.writeFile(filePath + '/' + cid + '.html', content, 'utf-8', (err, data) => {
+      console.log('----writeFile--err------', err)
+      if (err) {
+        reject(err)
+      } else {
+        resolve()
+      }
+    })
+  })
+}
+function testPuppeteer(cid = 343344068) {
+
+  const getArticle = async (browser, cid) => {
+    if (cid > 343344282) {
+      return
+    }
+    const page = await browser.newPage();
+    await page.goto('https://www.xinremenxs.com/load.html#7037531-57793047-' + cid);
+
+    // const wOssUrl = await ossUrl(cid)
+    let content = await page.$eval('article', el => el.innerHTML)
+    console.log('----content----', content)
+    while (content.indexOf('请稍后') >= 0) {
+      content = await page.$eval('article', el => el.innerHTML)
+      
+      console.log('----content----', content)
+    }
+    await writeToFile(cid, content)
+    return cid
+  }
+
+
+  (async () => {
+    const browser = await puppeteer.launch();
+    // 
+    let tCid = await getArticle(browser, cid)
+    // console.log('----content.innerHTML----', content.innerHTML)
+    await browser.close();
+    testPuppeteer(++tCid)
+    // let lastPage = ''
+    // if (cid > 343342256) {
+    //   lastPage = `<a href="./${(cid - 1)}.html">上一页</a>`
+    // }
+    // let nextPage = ''
+    // if (cid < 343344282) {
+    //   nextPage = `<a href="./${cid + 1}.html">下一页</a>`
+    // }
+    // content = content.replace(`</pre>`, `</pre><div style='text-align: center;'>${lastPage}${nextPage}</div>`)
+    // content = content.replace(/pre/g, 'div')
+    // content = content.replace(/　　/g, '<br>')
+    // fs.writeFile(filePath + '/' + cid + '.html', content, 'utf-8', (err, data) => {
+    //   console.log('----writeFile--err------', err)
+    //   // console.log('------data------', data)
+    //   getData(++cid)
+    // })
+  })();
+}
+
+
 module.exports = {
   beginPapapa,
   rewrite,
-  changeTag
+  changeTag,
+  testPuppeteer
 }
