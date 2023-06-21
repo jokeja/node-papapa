@@ -30,7 +30,8 @@ function stockCost(perMoney, totalNum, commissionRate, transferRate = 0.1 / 1000
 // 原始股数 原始成本 本次股数 本次单股金额
 function coverCost(oriStockNo, oriCost, curStockNo, curPermoney) {
   let curCost = stockCost(curPermoney, curStockNo, 2 / 10000)
-  return (oriStockNo * oriCost + curStockNo * curCost) / (oriStockNo + curStockNo)
+  let rst = (oriStockNo * oriCost + curStockNo * curCost) / (oriStockNo + curStockNo)
+  console.log(`coverCost(oriStockNo:${oriStockNo},oriCost:${oriCost},curStockNo:${curStockNo},curPermoney:${curPermoney})==${rst}`)
 }
 
 
