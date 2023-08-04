@@ -23,15 +23,18 @@ function commisionAmount(perMoney, totalNum, commissionRate, transferRate = 0.1 
 function stockCost(perMoney, totalNum, commissionRate, transferRate = 0.1 / 10000) {
   let dealAmount = perMoney * totalNum
   let commissionAmount = commisionAmount(perMoney, totalNum, commissionRate, transferRate)
-  return (dealAmount + commissionAmount) / totalNum
+  const rst = (dealAmount + commissionAmount) / totalNum
+  
+  // console.log(`本次成本(总股数:${totalNum},单股金额:${perMoney},佣金费率:${commissionRate},手续费:${commissionAmount})==${rst}`)
+  return rst
 }
 
 // 补仓成本计算
-// 原始股数 原始成本 本次股数 本次单股金额
+// 原始股数 原始单股成本 本次股数 本次单股金额
 function coverCost(oriStockNo, oriCost, curStockNo, curPermoney) {
   let curCost = stockCost(curPermoney, curStockNo, 2 / 10000)
   let rst = (oriStockNo * oriCost + curStockNo * curCost) / (oriStockNo + curStockNo)
-  console.log(`coverCost(oriStockNo:${oriStockNo},oriCost:${oriCost},curStockNo:${curStockNo},curPermoney:${curPermoney})==${rst}`)
+  console.log(`补仓后每股成本(原始股数:${oriStockNo},原始单股成本:${oriCost},本次股数:${curStockNo},本次单股金额:${curPermoney})==${rst}`)
 }
 
 
