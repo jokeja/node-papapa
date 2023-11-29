@@ -35,6 +35,7 @@ function coverCost(oriStockNo, oriCost, curStockNo, curPermoney) {
   let curCost = stockCost(curPermoney, curStockNo, 2 / 10000)
   let rst = (oriStockNo * oriCost + curStockNo * curCost) / (oriStockNo + curStockNo)
   console.log(`补仓后每股成本(原始股数:${oriStockNo},原始单股成本:${oriCost},本次股数:${curStockNo},本次单股金额:${curPermoney})==${rst}`)
+  return rst
 }
 
 
@@ -43,11 +44,18 @@ function coverCost(oriStockNo, oriCost, curStockNo, curPermoney) {
 function makeTProfit(tStockNum, sellPrice, buyPrice, commissionRate, transferRate = 0.1 / 10000) {
   let rst = (sellPrice - buyPrice) * tStockNum - (commisionAmount(sellPrice, tStockNum, commissionRate, transferRate) + commisionAmount(buyPrice, tStockNum, commissionRate, transferRate))
 
-  console.log(`makeTProfit(tStockNum:${tStockNum},sellPrice:${sellPrice},buyPrice:${buyPrice})==${rst}`)
+  console.log(`做T利润(T股数:${tStockNum},卖出价格:${sellPrice},买入价格:${buyPrice})==${rst}`)
+}
+
+function curProfit(tStockNum, sellPrice, buyPrice, commissionRate, transferRate = 0.1 / 10000) {
+  let rst = (sellPrice - buyPrice) * tStockNum - commisionAmount(sellPrice, tStockNum, commissionRate, transferRate)
+
+  console.log(`收获利润(总股数:${tStockNum},卖出价格:${sellPrice},买入价格:${buyPrice})==${rst}(扣除手续费)`)
 }
 
 module.exports = {
   makeTProfit,
   coverCost,
-  stockCost
+  stockCost,
+  curProfit
 }
