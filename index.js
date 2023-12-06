@@ -21,14 +21,18 @@ const baoshi = require('./baoshi')
 // const 深创补仓后单价 = stock.coverCost(sc原始股数, sc原始单价, sc本次股数, sc本次单价)
 // const 深创利润 = stock.curProfit(sc本次股数 + sc原始股数, sc卖出单价, 深创补仓后单价, 2 / 10000)
 
-const rb本次单价 = 5.01
-const rb本次股数 = 300
-const rb卖出单价 = 5.3
-const 人保T = stock.makeTProfit(rb本次股数, rb卖出单价, rb本次单价, 2 / 10000)
-const rb原始股数 = 0
-const rb原始单价 = 0
-const 人保补仓后单价 = stock.coverCost(rb原始股数, rb原始单价, rb本次股数, rb本次单价)
-const 人保利润 = stock.curProfit(rb本次股数 + rb原始股数, rb卖出单价, 人保补仓后单价, 2 / 10000)
+// const rb本次单价 = 5.01
+// const rb本次股数 = 300
+// const rb卖出单价 = 5.3
+// const 人保T = stock.makeTProfit(rb本次股数, rb卖出单价, rb本次单价, 2 / 10000)
+// const rb原始股数 = 0
+// const rb原始单价 = 0
+// const 人保补仓后单价 = stock.coverCost(rb原始股数, rb原始单价, rb本次股数, rb本次单价)
+// const 人保利润 = stock.curProfit(rb本次股数 + rb原始股数, rb卖出单价, 人保补仓后单价, 2 / 10000)
 
+// 太平洋
+stock.coverCost(0, 0, 100, 4.89)
+stock.coverCost(100, 4.94, 200, 4.6)
+stock.curProfit(300, 3.78, 4.73, 2 / 10000)
 
 // baoshi.testPuppeteer()
