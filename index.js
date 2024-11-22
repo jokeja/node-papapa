@@ -3,18 +3,19 @@ const stock = require('./stock')
 const baoshi = require('./baoshi')
 // cool18.beginPapapa()
 // cool18.rewrite()
-// const 深创1 = stock.coverCost(7800, 0.8036,3200, 0.7540, 2 / 10000)
-// const 深创2 = stock.makeTProfit(3200, 0.7630, 0.7540, 2 / 10000)
-// const dls本次单价 = 5.55
-// const dls本次股数 = 600
-// const dls上次股数 = 400
-// const 德利斯T = stock.makeTProfit(dls本次股数, 5.72, dls本次单价, 2 / 10000)
-// const 德利斯补仓后单价 = stock.coverCost(dls上次股数, 5.72, dls本次股数, dls本次单价)
-// const 德利斯利润 = stock.curProfit(dls本次股数 + dls上次股数, 5.72, dls德利斯补仓后单价, 2 / 10000)
 
-// const sc本次单价 = 0.637
+const dls本次单价 = 3.59 //5.57
+const dls期望卖出价格 = 3.77
+const dls本次股数 = 500
+const dls上次股数 = 900
+const dls成本 = 4.6721
+const 德利斯T = stock.makeTProfit(dls本次股数, dls期望卖出价格, dls本次单价, 2 / 10000)
+// const 德利斯补仓后单价 = stock.coverCost(dls上次股数, dls成本, dls本次股数, dls本次单价)
+// const 德利斯利润 = stock.curProfit(dls本次股数 + dls上次股数, dls成本, 德利斯补仓后单价, 2 / 10000)
+
+// const sc本次单价 = 0.6030
 // const sc本次股数 = 2200
-// const sc卖出单价 = 0.666
+// const sc卖出单价 = 0.632
 // const 深创T = stock.makeTProfit(sc本次股数, sc卖出单价, sc本次单价, 2 / 10000)
 // const sc原始股数 = 7800
 // const sc原始单价 = 0.8063
@@ -31,8 +32,21 @@ const baoshi = require('./baoshi')
 // const 人保利润 = stock.curProfit(rb本次股数 + rb原始股数, rb卖出单价, 人保补仓后单价, 2 / 10000)
 
 // 太平洋
-stock.coverCost(0, 0, 100, 4.89)
-stock.coverCost(100, 4.94, 200, 4.6)
-stock.curProfit(300, 3.78, 4.73, 2 / 10000)
+// stock.coverCost(0, 0, 100, 4.89)
+// stock.coverCost(100, 4.94, 200, 4.6)
+// stock.curProfit(300, 3.78, 4.73, 2 / 10000)
 
 // baoshi.testPuppeteer()
+
+
+// try {
+//   let a
+//   const n = 60
+//   console.time(a)
+//   let fb_rst = fbnc(n);
+//   let b = new Date().getTime();
+//   console.timeEnd(a)
+//   console.log(n)
+// } catch (e) {
+//   console.log(e)
+// }
