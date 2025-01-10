@@ -91,6 +91,9 @@ function genRules(formInfo) {
           {
             required: true,
             validator: (r, v, c) => {
+              if(!v){
+                return c('请补充信息')
+              }
               c()
             }
           }
