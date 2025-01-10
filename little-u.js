@@ -11,23 +11,31 @@ function excelTitle2Obj() {
 
 
 function createComonent(comp) {
-  let propStr = ''
+  let propArr = []
   if (comp.props) {
+    if (comp.name.toLowerCase().indexOf('input') != -1) {
+      let propsKey = Object.keys(comp.props)
+      if (propsKey.indexOf('placeholder') == -1) {
+        comp.props.placeholder = {
+          value: ''
+        }
+      }
+    }
     Object.keys(comp.props).forEach(key => {
       const prop = comp.props[key]
       if (typeof prop == 'number') {
-        propStr += `:${key}="${prop}"`
+        propArr.push(`:${key}="${prop}"`)
       }
       else if (typeof prop == 'boolean') {
-        propStr += `:${key}="${prop}"`
+        propArr.push(`:${key}="${prop}"`)
       }
       else if (typeof prop == 'string') {
-        propStr += `${key}="${prop}"`
+        propArr.push(`${key}="${prop}"`)
       } else {
         if (prop.reactive) {
-          propStr += `:${key}="${prop.value}"`
+          propArr.push(`:${key}="${prop.value}"`)
         } else {
-          propStr += `${key}="${prop.value}"`
+          propArr.push(`${key}="${prop.value}"`)
         }
       }
     })
@@ -47,6 +55,7 @@ function createComonent(comp) {
     }
   }
   const vModel = comp.model ? `v-model="${comp.model}"` : ''
+  const propStr = propArr.join(' ')
   return `<${comp.name} ${vModel} ${propStr}>\n${childrenComps.join('')}${comp.innerHtml || ''}</${comp.name}>\n`
 }
 
