@@ -15,7 +15,10 @@ function createComonent(comp) {
   if (comp.props) {
     Object.keys(comp.props).forEach(key => {
       const prop = comp.props[key]
-      if (typeof prop == 'boolean') {
+      if (typeof prop == 'number') {
+        propStr += `:${key}="${prop}"`
+      }
+      else if (typeof prop == 'boolean') {
         propStr += `:${key}="${prop}"`
       }
       else if (typeof prop == 'string') {
@@ -31,148 +34,25 @@ function createComonent(comp) {
   }
   let childrenComps = []
   if (comp.children) {
-    childrenComps = comp.children.map(childComp => {
-      return createComonent(childComp)
-    })
+    if (comp.children instanceof Array) {
+      childrenComps = comp.children.map(childComp => {
+        return createComonent(childComp)
+      })
+    } else if (typeof comp.children == 'object') {
+      childrenComps = Object.keys(comp.children).map(childKey => {
+        const childComp = comp.children[childKey]
+        childComp.name = childKey
+        return createComonent(childComp)
+      })
+    }
   }
   const vModel = comp.model ? `v-model="${comp.model}"` : ''
   return `<${comp.name} ${vModel} ${propStr}>\n${childrenComps.join('')}${comp.innerHtml || ''}</${comp.name}>\n`
 }
 
-function convertObjToFormItem() {
-  let aa = {
-    fi奖项等级: {
-      components: {
-        Input: ''
-      }
-    },
-    fi奖项名称: {
-      components: {
-        Input: ''
-      }
-    },
-    fi奖项数量: {
-      Input: ''
-    },
-    fi奖项封面图片: {
-      components: {
-        UploadFileSingle: {
-          children: [
-            {
-              name: 'p',
-              props: {
-                slot: {
-                  value: 'tips'
-                }
-              },
-              innerHtml: '建议尺寸：建议上传1:1的奖品封面图，大小不超过1M，格式为：jpg/bmp/png/gif'
-            }
-          ]
-        }
-      }
-    },
-    fi奖品文字介绍: {
-      components: {
-        Input: {
-          props: {
-            type: 'textarea'
-          }
-        }
-      }
-    },
-    fi使用有效期: {
-      components: {
-        RadioGroup: {
-          name: 'RadioGroup',
-          children: [
-            {
-              name: 'Radio',
-              props: {
-                label: {
-                  value: '0',
-                  reactive: true
-                }
-              },
-              children: [
-                {
-                  name: 'span',
-                  innerHtml: '不限'
-                }
-              ]
-            },
-            {
-              name: 'Radio',
-              props: {
-                label: {
-                  value: '1',
-                  reactive: true
-                }
-              },
-              children: [
-                {
-                  name: 'span',
-                  innerHtml: '限制'
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    fi适用商户: {
-      components: {
-        RadioGroup: {
-          name: 'RadioGroup',
-          children: [
-            {
-              name: 'Radio',
-              innerHtml: '限本店使用',
-              label: 1
-            },
-            {
-              name: 'Radio',
-              innerHtml: '指定本商圈内合作商户使用',
-              label: 2
-            },
-            {
-              name: 'Radio',
-              innerHtml: '指定平台内合作商户使用',
-              label: 3
-            }
-          ]
-        },
-        span: {
-          innerHtml: '指定适用商户',
-          props: {
-            class: 'click-span'
-          }
-        },
-        PlusTable: {
-          props: {
-            localPaging: true,
-            showSeachButton: false,
-            columns: {
-              value: 'columns',
-              reactive: true
-            }
-          }
-        }
-      }
-    },
-    fi奖项抽中概率: {
-      components: {
-        Input: { name: 'Input' }
-
-      }
-    },
-    fi重复中奖限制: {
-      components: {
-        Input: { name: 'Input' }
-      }
-    }
-  }
-  let result = Object.keys(aa).map(key => {
-    const item = aa[key]
+function convertObjToFormItem(formInfo) {
+  let result = Object.keys(formInfo).map(key => {
+    const item = formInfo[key]
     let components = []
     if (item.components) {
       components = Object.keys(item.components).map(cKey => {
@@ -180,16 +60,154 @@ function convertObjToFormItem() {
         comp.name = cKey
         if (!comp.model) {
           comp.model = `formInfo.${key}`
+        } else {
+          comp.model = `formInfo.${comp.model}`
         }
         let componentStr = createComonent(comp)
         return componentStr
       })
     }
-
     let itemStr = `<FormItem label="${key.replace('fi', '')}" prop="${key}">\n${components.join('')}\n</FormItem>\n`
     return itemStr
   }).join(` `)
   console.log(result)
 }
 
-convertObjToFormItem()
+function genRules(formInfo) {
+  console.log('-----rules------\n\n\n')
+  let result = Object.keys(formInfo).map(key => {
+    const item = formInfo[key]
+    if (item.required) {
+      return `${key}: [
+          {
+            required: true,
+            validator: (r, v, c) => {
+              c()
+            }
+          }
+        ]`
+    }
+    return ''
+  }).filter(item => {
+    return item.length > 0
+  }).join(`,\n`)
+  console.log(result)
+}
+
+let formInfo = {
+  fi活动名称: {
+    required: true,
+    components: {
+      Input: {}
+    }
+  },
+  fi活动类型: {
+    required: true,
+    components: {
+      PlusSelect: {}
+    }
+  },
+  fi活动时间: {
+    required: true,
+    components: {
+      BeginEndDatePicker: {}
+    }
+  },
+  fi集合地点: {
+    required: true,
+    components: {
+      Input: {}
+    }
+  },
+  fi退款政策: {
+    required: true,
+    components: {
+      PlusSelect: {}
+    }
+  },
+  fi活动主办商家: {
+    required: true,
+    components: {
+      Input: {}
+    }
+  },
+  fi活动门票: {
+    required: true,
+    components: {
+      Input: {}
+    }
+  },
+  fi活动海报: {
+    required: true,
+    components: {
+      UploadFileSingle: {
+        children: {
+          p: {
+            props: {
+              slot: 'tips'
+            },
+            innerHtml: '需上传1张5M内的JPG/PNG图片，建议尺寸750*430px;'
+          }
+        }
+      }
+    }
+  },
+  fi活动页主图: {
+    required: true,
+    components: {
+      UploadFileSingle: {
+        children: {
+          p: {
+            props: {
+              slot: 'tips'
+            },
+            innerHtml: '需上传1张5M内的JPG/PNG图片，建议尺寸750*430px;'
+          }
+        }
+      }
+    }
+  },
+  fi活动说明: {
+    required: true,
+    components: {
+      Input: {
+        props: {
+          type: 'textarea'
+        }
+      }
+    }
+  },
+  fi活动详情图: {
+    components: {
+      UploadFile: {
+        props: {
+          maxUploadFiles: 5
+        },
+        children: {
+          p: {
+            props: {
+              slot: 'tips'
+            },
+            innerHtml: '支持上传5张5M内的JPG/PNG图片，建议宽度750px，高度不限'
+          }
+        }
+      }
+    }
+  },
+  fi报名成功进群图: {
+    components: {
+      UploadFileSingle: {
+        children: {
+          p: {
+            props: {
+              slot: 'tips'
+            },
+            innerHtml: '支持上传1张JPG/PNG格式的加群二维码'
+          }
+        }
+      }
+    }
+  }
+}
+convertObjToFormItem(formInfo)
+genRules(formInfo)

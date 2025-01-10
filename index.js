@@ -4,11 +4,11 @@ const baoshi = require('./baoshi')
 // cool18.beginPapapa()
 // cool18.rewrite()
 
-const dls本次单价 = 3.59 //5.57
-const dls期望卖出价格 = 3.77
-const dls本次股数 = 500
+const dls本次单价 = 4.46 //
+const dls期望卖出价格 = 4.64 // 4.77
+const dls本次股数 = 400
 const dls上次股数 = 900
-const dls成本 = 4.6721
+const dls成本 = 5.1533
 const 德利斯T = stock.makeTProfit(dls本次股数, dls期望卖出价格, dls本次单价, 2 / 10000)
 // const 德利斯补仓后单价 = stock.coverCost(dls上次股数, dls成本, dls本次股数, dls本次单价)
 // const 德利斯利润 = stock.curProfit(dls本次股数 + dls上次股数, dls成本, 德利斯补仓后单价, 2 / 10000)
