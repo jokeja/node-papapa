@@ -92,7 +92,7 @@ function genRules(formInfo) {
             required: true,
             validator: (r, v, c) => {
               if(!v){
-                return c('请补充信息')
+                return c('请填写${key.replace('fi', '')}')
               }
               c()
             }
@@ -107,91 +107,68 @@ function genRules(formInfo) {
 }
 
 let formInfo = {
-  fi活动名称: {
-    required: true,
-    components: {
-      Input: {}
-    }
-  },
-  fi活动类型: {
-    required: true,
-    components: {
-      PlusSelect: {}
-    }
-  },
-  fi活动时间: {
-    required: true,
-    components: {
-      BeginEndDatePicker: {}
-    }
-  },
-  fi集合地点: {
-    required: true,
-    components: {
-      Input: {}
-    }
-  },
-  fi退款政策: {
-    required: true,
-    components: {
-      PlusSelect: {}
-    }
-  },
-  fi活动主办商家: {
-    required: true,
-    components: {
-      Input: {}
-    }
-  },
-  fi活动门票: {
-    required: true,
-    components: {
-      Input: {}
-    }
-  },
-  fi活动海报: {
-    required: true,
-    components: {
-      UploadFileSingle: {
-        children: {
-          p: {
-            props: {
-              slot: 'tips'
-            },
-            innerHtml: '需上传1张5M内的JPG/PNG图片，建议尺寸750*430px;'
-          }
-        }
-      }
-    }
-  },
-  fi活动页主图: {
-    required: true,
-    components: {
-      UploadFileSingle: {
-        children: {
-          p: {
-            props: {
-              slot: 'tips'
-            },
-            innerHtml: '需上传1张5M内的JPG/PNG图片，建议尺寸750*430px;'
-          }
-        }
-      }
-    }
-  },
-  fi活动说明: {
+  fi门票名称: {
     required: true,
     components: {
       Input: {
         props: {
-          type: 'textarea'
+          placeholder: '请输入20字内的门票名称'
         }
       }
     }
   },
-  fi活动详情图: {
+  fi门票价格: {
+    required: true,
     components: {
-      UploadFile: {
+      Input: {
+        props: {
+          placeholder: '请输入20字内的门票名称'
+        }
+      }
+    }
+  },
+  fi门票数量: {
+    required: true,
+    components: {
+      Input: {
+        props: {
+          placeholder: '请输入20字内的门票名称'
+        }
+      }
+    }
+  },
+  fi开售时间: {
+    components: {
+      BeginEndDatePicker: {
+        props: {
+          type: 'single',
+          placeholder: '选填，为空则创建活动即支持报名'
+        }
+      }
+    },
+  },
+  fi报名截止时间: {
+    components: {
+      BeginEndDatePicker: {
+        props: {
+          type: 'single',
+          placeholder: '选填，为空则活动结束停止报名'
+        }
+      }
+    },
+  },
+  fi每人限购: {
+    components: {
+      Input: {
+        props: {
+          placeholder: '请输入1-999999，不填则不限购'
+        }
+      }
+    },
+  },
+  fi封面图: {
+    components: {
+      UploadFileSingle: {
         props: {
           maxUploadFiles: 5
         },
@@ -200,22 +177,18 @@ let formInfo = {
             props: {
               slot: 'tips'
             },
-            innerHtml: '支持上传5张5M内的JPG/PNG图片，建议宽度750px，高度不限'
+            innerHtml: '支持上传1张,建议尺寸:300x300px文件格式:png/jpg/gif'
           }
         }
       }
     }
   },
-  fi报名成功进群图: {
+  fi门票说明: {
     components: {
-      UploadFileSingle: {
-        children: {
-          p: {
-            props: {
-              slot: 'tips'
-            },
-            innerHtml: '支持上传1张JPG/PNG格式的加群二维码'
-          }
+      Input: {
+        props: {
+          type: 'textarea',
+          placeholder: '请输入300字内的入场门票说明:使用方式、注意事项等'
         }
       }
     }
