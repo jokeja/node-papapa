@@ -86,15 +86,35 @@ function genRules(formInfo) {
   console.log('-----rules------\n\n\n')
   let result = Object.keys(formInfo).map(key => {
     const item = formInfo[key]
-    if (item.required) {
+    const validatorCon = []
+    if (item.regular) {
+      let condition = []
+      if (item.regular.number) {
+        let numberCondition = []
+        if (item.regular.number.min == 0) {
+          numberCondition.push('this.$regular.nonnegativeInteger(v)')
+        }
+        if (item.regular.number.min == 1) {
+          numberCondition.push('this.$regular.isPositiveInteger(v)')
+        }
+        if (item.regular.number.max) {
+          numberCondition.push(`v<=${item.regular.number.max}`)
+        }
+        condition.push(`if(${numberCondition.join('&&')}){return c()}`)
+      }
+      let conditionStr = condition.join('\n')
+      validatorCon.push(conditionStr)
+    }
+    const defaultCondigion = `if(v){
+                return c()
+              }`
+    if (item.required || validatorCon.length) {
       return `${key}: [
           {
-            required: true,
+            required: ${item.required || false},
             validator: (r, v, c) => {
-              if(!v){
-                return c('请填写${key.replace('fi', '')}')
-              }
-              c()
+              ${validatorCon.length ? validatorCon.join('') : defaultCondigion}
+              c('请设置${key.replace('fi', '')}')
             }
           }
         ]`
@@ -106,12 +126,37 @@ function genRules(formInfo) {
   console.log(result)
 }
 
+function genDetail(formInfo) {
+  let result = Object.keys(formInfo).map(key => {
+    const item = formInfo[key]
+    let components = []
+    if (item.components) {
+      components = Object.keys(item.components).map(cKey => {
+        const comp = item.components[cKey]
+        comp.name = cKey
+        if (!comp.model) {
+          comp.model = `formInfo.${key}`
+        } else {
+          comp.model = `formInfo.${comp.model}`
+        }
+        let componentStr = createComonent(comp)
+        return componentStr
+      })
+    }
+    let itemStr = `<FormItem label="${key.replace('fi', '')}">\n<span>{{formInfo.${key}}}</span>\n</FormItem>\n`
+    return itemStr
+  }).join(` `)
+  console.log(result)
+}
+
+
 let formInfo = {
   fi门票名称: {
     required: true,
     components: {
-      Input: {
+      PlusInput: {
         props: {
+          maxlength: 20,
           placeholder: '请输入20字内的门票名称'
         }
       }
@@ -129,6 +174,12 @@ let formInfo = {
   },
   fi门票数量: {
     required: true,
+    regular: {
+      number: {
+        max: 999999,
+        min: 1
+      }
+    },
     components: {
       Input: {
         props: {
@@ -185,8 +236,9 @@ let formInfo = {
   },
   fi门票说明: {
     components: {
-      Input: {
+      PlusInput: {
         props: {
+          maxlength: 300,
           type: 'textarea',
           placeholder: '请输入300字内的入场门票说明:使用方式、注意事项等'
         }
@@ -194,5 +246,6 @@ let formInfo = {
     }
   }
 }
-convertObjToFormItem(formInfo)
+// convertObjToFormItem(formInfo)
 genRules(formInfo)
+// genDetail(formInfo)
