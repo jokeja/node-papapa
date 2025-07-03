@@ -4,8 +4,8 @@ const baoshi = require('./baoshi')
 // cool18.beginPapapa()
 // cool18.rewrite()
 
-const dls本次单价 = 4.46 // 第一次补仓4.46
-const dls期望卖出价格 = 4.64 // 4.77
+const dls本次单价 = 4.46 // 第一次补仓4.46 第二次计划4.32
+const dls期望卖出价格 = 4.66 // 4.77
 const dls本次股数 = 400
 const dls上次股数 = 900
 const dls成本 = 5.1533
