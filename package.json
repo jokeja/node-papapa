@@ -14,6 +14,7 @@
     "cheerio": "^1.0.0-rc.12",
     "crypto-js": "^4.1.1",
     "encoding": "^0.1.13",
+    "fonteditor-core": "^2.6.1",
     "fs": "0.0.1-security",
     "https-proxy-agent": "^5.0.1",
     "image-size": "^2.0.2",

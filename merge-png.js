@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
-
 async function mergeFolderImages(inputDir, outputPath) {
   try {
     // 1. 读取文件夹中的所有图片文件

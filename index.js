@@ -1,17 +1,24 @@
 const cool18 = require('./cool18')
 const stock = require('./stock')
 const baoshi = require('./baoshi')
+const 补仓计算 = (本次单价, 期望卖出价格, 补仓股数, 现有股数, 现有每股成本) => {
+  const 中国银行成本 = 5.4263
+  const 中国银行T = stock.makeTProfit(补仓股数, 期望卖出价格, 本次单价, 2 / 10000)
+  const 补仓后单价 = stock.coverCost(现有股数, 现有每股成本, 补仓股数, 本次单价)
+  const 中国银行利润 = stock.curProfit(补仓股数 + 现有股数, 现有每股成本, 补仓后单价, 2 / 10000)
+  return 补仓后单价
+}
 // cool18.beginPapapa()
 // cool18.rewrite()
-
-const dls本次单价 = 4.46 // 第一次补仓4.46 第二次计划4.32
-const dls期望卖出价格 = 4.66 // 4.77
-const dls本次股数 = 400
-const dls上次股数 = 900
-const dls成本 = 5.1533
-const 德利斯T = stock.makeTProfit(dls本次股数, dls期望卖出价格, dls本次单价, 2 / 10000)
-// const 德利斯补仓后单价 = stock.coverCost(dls上次股数, dls成本, dls本次股数, dls本次单价)
-// const 德利斯利润 = stock.curProfit(dls本次股数 + dls上次股数, dls成本, 德利斯补仓后单价, 2 / 10000)
+console.group('中国银行')
+const 补仓后每股成本 = 补仓计算(5.30, 5.43, 800, 800, 5.4263)
+console.groupEnd()
+// const dls本次单价 = 4.46 // 第一次补仓4.46 第二次计划4.32
+// const dls期望卖出价格 = 4.74 // 4.77
+// const dls本次股数 = 400
+// const dls上次股数 = 900
+// const dls成本 = 5.1533
+// const 德利斯T = stock.makeTProfit(dls本次股数, dls期望卖出价格, dls本次单价, 2 / 10000)
 
 // const sc本次单价 = 0.6030
 // const sc本次股数 = 2200
