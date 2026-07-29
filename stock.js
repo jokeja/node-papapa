@@ -48,9 +48,10 @@ function makeTProfit(tStockNum, sellPrice, buyPrice, commissionRate, transferRat
 }
 
 function curProfit(tStockNum, sellPrice, buyPrice, commissionRate, transferRate = 0.1 / 10000) {
-  let rst = (sellPrice - buyPrice) * tStockNum - commisionAmount(sellPrice, tStockNum, commissionRate, transferRate)
+  let commAmount = commisionAmount(sellPrice, tStockNum, commissionRate, transferRate)
+  let rst = (sellPrice - buyPrice) * tStockNum - commAmount
 
-  console.log(`收获利润(总股数:${tStockNum},卖出价格:${sellPrice},买入价格:${buyPrice})==${rst}(扣除手续费)`)
+  console.log(`收获利润(总股数:${tStockNum},卖出价格:${sellPrice},买入价格:${buyPrice})==${rst}(扣除手续费：${commAmount})`)
 }
 
 module.exports = {
