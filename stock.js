@@ -24,7 +24,7 @@ function stockCost(perMoney, totalNum, commissionRate, transferRate = 0.1 / 1000
   let dealAmount = perMoney * totalNum
   let commissionAmount = commisionAmount(perMoney, totalNum, commissionRate, transferRate)
   const rst = (dealAmount + commissionAmount) / totalNum
-  
+
   // console.log(`本次成本(总股数:${totalNum},单股金额:${perMoney},佣金费率:${commissionRate},手续费:${commissionAmount})==${rst}`)
   return rst
 }
@@ -42,20 +42,24 @@ function coverCost(oriStockNo, oriCost, curStockNo, curPermoney) {
 // 做T利润 所得利润为=（卖出价-买入价）*股数-买卖佣金和印花税及沪市过户费
 // 做T股数，卖出价，买入价，佣金费率，过户费率
 function makeTProfit(tStockNum, sellPrice, buyPrice, commissionRate, transferRate = 0.1 / 10000) {
-  let rst = (sellPrice - buyPrice) * tStockNum - (commisionAmount(sellPrice, tStockNum, commissionRate, transferRate) + commisionAmount(buyPrice, tStockNum, commissionRate, transferRate))
+  let sellComAmount = commisionAmount(sellPrice, tStockNum, commissionRate, transferRate)
+  let buyComAmount = commisionAmount(buyPrice, tStockNum, commissionRate, transferRate)
+  let commAmount = sellComAmount + buyComAmount
+  let rst = (sellPrice - buyPrice) * tStockNum - commAmount
 
-  console.log(`做T利润(T股数:${tStockNum},卖出价格:${sellPrice},买入价格:${buyPrice})==${rst}`)
+  console.log(`做T利润(T股数:${tStockNum},卖出价格:${sellPrice},买入价格:${buyPrice},卖出手续费:${sellComAmount},买入手续费:${buyComAmount})==${rst}`)
+  return rst
 }
 
 function curProfit(tStockNum, sellPrice, buyPrice, commissionRate, transferRate = 0.1 / 10000) {
   let commAmount = commisionAmount(sellPrice, tStockNum, commissionRate, transferRate)
-  let rst = (sellPrice - buyPrice) * tStockNum - commAmount
+  let rst = (sellPrice - buyPrice) * tStockNum - commAmount - commAmount
 
   console.log(`收获利润(总股数:${tStockNum},卖出价格:${sellPrice},买入价格:${buyPrice})==${rst}(扣除手续费：${commAmount})`)
   return rst
 }
 
-function sellProfit(sStockNum,totalStockNum, sellPrice, buyPrice, commissionRate, transferRate = 0.1 / 10000) {
+function sellProfit(sStockNum, totalStockNum, sellPrice, buyPrice, commissionRate, transferRate = 0.1 / 10000) {
   let commAmount = (commisionAmount(sellPrice, sStockNum, commissionRate, transferRate) + commisionAmount(buyPrice, totalStockNum, commissionRate, transferRate))
   let rst = (buyPrice * totalStockNum + commAmount - sStockNum * sellPrice) / (totalStockNum - sStockNum)
   //console.log(`卖出后成本(卖出股数:${sStockNum},总股数:${totalStockNum},卖出价格:${sellPrice},买入价格:${buyPrice})==${rst}(扣除手续费：${commAmount})`)
